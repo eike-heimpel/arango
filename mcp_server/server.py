@@ -1,24 +1,14 @@
 from fastmcp import FastMCP
 from typing import Dict, Any, List, Optional
 import os
-from arango import ArangoClient
 import dotenv
 import datetime
 import tools as arango_tools
+from tools.db_connection import db, mcp as base_mcp
 
 dotenv.load_dotenv()
 
-# Get environment variables or use defaults
-ARANGO_URL = os.environ.get("ARANGO_URL")
-ARANGO_DB = os.environ.get("ARANGO_DB")
-ARANGO_USERNAME = os.environ.get("ARANGO_USERNAME")
-ARANGO_PASSWORD = os.environ.get("ARANGO_PASSWORD")
-
-mcp = FastMCP("ArangoDB Server 🔗", port=22000)
-
-# Initialize ArangoDB client
-client = ArangoClient(hosts=ARANGO_URL)
-db = client.db(ARANGO_DB, username=ARANGO_USERNAME, password=ARANGO_PASSWORD)
+mcp = FastMCP(name="arango-knowledge-base", port=22000, host="0.0.0.0")
 
 mcp.add_tool(arango_tools.add_temporal_metadata)
 mcp.add_tool(arango_tools.arango_query)
@@ -42,6 +32,7 @@ mcp.add_tool(arango_tools.arango_create_index)
 mcp.add_tool(arango_tools.arango_list_indexes)
 mcp.add_tool(arango_tools.arango_create_temporal_indexes)
 mcp.add_tool(arango_tools.arango_backup)
+mcp.add_tool(arango_tools.arango_get_metadata)
 
 # Image/Asset management tools
 # Setting FASTMCP_ALLOW_ARBITRARY_TYPES=1 environment variable will be needed
@@ -52,4 +43,5 @@ mcp.add_tool(arango_tools.arango_delete_image)
 mcp.add_tool(arango_tools.arango_update_image_metadata)
 
 if __name__ == "__main__":
-    mcp.run()
+    import asyncio
+    asyncio.run(mcp.run(transport='sse', host="0.0.0.0"))

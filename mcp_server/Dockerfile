@@ -8,6 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the server files
 COPY . .
 
-EXPOSE 22000
-
 CMD ["python", "server.py"] 

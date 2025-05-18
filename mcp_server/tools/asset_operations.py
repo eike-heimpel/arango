@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from fastmcp import Image
 from pydantic import ConfigDict
-from .db_connection import db, add_temporal_metadata
+from .db_connection import db, add_temporal_metadata, mcp
 
 # Define the collection name for assets
 ASSETS_COLLECTION = "assets"
@@ -37,6 +37,7 @@ def _ensure_assets_collection():
         db.collection(ASSETS_COLLECTION).add_hash_index(["asset_type"], unique=False)
         print(f"Created '{ASSETS_COLLECTION}' collection")
 
+@mcp.tool()
 def arango_upload_image(image_data: bytes, format: str = "png", name: Optional[str] = None, 
                         tags: Optional[List[str]] = None, 
                         description: Optional[str] = None) -> Dict[str, Any]:
@@ -88,6 +89,7 @@ def arango_upload_image(image_data: bytes, format: str = "png", name: Optional[s
         "status": "uploaded"
     }
 
+@mcp.tool()
 def arango_get_image(key: str) -> Dict[str, Any]:
     """Retrieve an image from ArangoDB by its key.
     
@@ -128,6 +130,7 @@ def arango_get_image(key: str) -> Dict[str, Any]:
         "description": doc.get("description", "")
     }
 
+@mcp.tool()
 def arango_list_images(tag: Optional[str] = None, limit: int = 100) -> List[Dict[str, Any]]:
     """List images stored in ArangoDB, optionally filtered by tag.
     
@@ -154,6 +157,7 @@ def arango_list_images(tag: Optional[str] = None, limit: int = 100) -> List[Dict
     cursor = db.aql.execute(query)
     return [doc for doc in cursor]
 
+@mcp.tool()
 def arango_delete_image(key: str) -> Dict[str, Any]:
     """Delete an image from ArangoDB by its key.
     
@@ -180,6 +184,7 @@ def arango_delete_image(key: str) -> Dict[str, Any]:
         "status": "deleted"
     }
 
+@mcp.tool()
 def arango_update_image_metadata(key: str, 
                                name: Optional[str] = None, 
                                tags: Optional[List[str]] = None, 
