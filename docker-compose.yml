@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  arangodb:
+    image: arangodb:3.10
+    environment:
+      ARANGO_ROOT_PASSWORD: ${ARANGO_ROOT_PASSWORD}
+      ARANGO_USERNAME: ${ARANGO_USERNAME:-root}
+    ports:
+      - "8529:8529"
+    volumes:
+      - arangodb_data:/var/lib/arangodb3
+      - arangodb_apps:/var/lib/arangodb3-apps
+    restart: unless-stopped
+
+  mcp_server:
+    build:
+      context: ./mcp_server
+    environment:
+      ARANGO_URL: ${ARANGO_URL}
+      ARANGO_DB: ${ARANGO_DB}
+      ARANGO_USERNAME: ${ARANGO_USERNAME}
+      ARANGO_PASSWORD: ${ARANGO_PASSWORD}
+    ports:
+      - "22000:22000"
+    depends_on:
+      - arangodb
+
+volumes:
+  arangodb_data:
+    name: arangodb_data
+  arangodb_apps:
+    name: arangodb_apps
