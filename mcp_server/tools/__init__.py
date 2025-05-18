@@ -29,6 +29,15 @@ from .schema_operations import (
 )
 from .utilities import arango_backup
 
+# Import asset operations - these are now decorated with @tool
+from .asset_operations import (
+    arango_upload_image,
+    arango_get_image,
+    arango_list_images,
+    arango_delete_image,
+    arango_update_image_metadata
+)
+
 __all__ = [
     'add_temporal_metadata',
     'arango_query',
@@ -51,4 +60,10 @@ __all__ = [
     'arango_create_index',
     'arango_list_indexes',
     'arango_create_temporal_indexes',
+    'arango_backup',
+    'arango_upload_image',
+    'arango_get_image',
+    'arango_list_images',
+    'arango_delete_image',
+    'arango_update_image_metadata',
 ]
